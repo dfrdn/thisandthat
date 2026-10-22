@@ -1,0 +1,340 @@
+---
+import Base from '../layouts/Base.astro'
+import { site } from '../site'
+
+// The Record section is hidden for now; set to true to show it again.
+const showRecord = false
+const record = [
+  { big: '4th', title: false, note: '2018 Philippine Bar Examinations' },
+  { big: 'Juris Doctor, Second Honors', title: true, note: 'Ateneo Law School · ranked 20th' },
+  {
+    big: 'Partner, TTFC',
+    title: true,
+    note: 'Tungol Tan Fordan Campos Law. Previously Gulapa Law and Director II, Senate of the Philippines.',
+  },
+  { big: 'Program Coordinator, MLQU Law', title: true, note: 'AI for Modern Legal Practice; Legal Forms' },
+]
+const talks = [
+  'Building your own AI workflows for legal practice',
+  'AI in compliance and regulatory work',
+  'Copyright, fair use, and AI training',
+]
+const topics = [
+  'Speaking or teaching invitation',
+  'Writing or interview',
+  'A question about AI and the law',
+  'Something else',
+]
+---
+<Base
+  title="About"
+  description="Daniel Fordan is a Philippine lawyer on AI, technology, and IP law, Partner at TTFC, Program Coordinator at MLQU School of Law, and President of PAFLA."
+>
+  <section class="wrap hero">
+    <div class="photo">
+      <img src="/img/portrait-clean.webp" width="652" height="1107" alt="Atty. Daniel Fordan in a dark suit and striped tie" />
+    </div>
+    <div>
+      <p class="hud">About</p>
+      <h1>I deal with codes.</h1>
+      <p class="first">
+        The Civil Code and the Revised Penal Code on one side; the code that runs AI on the other. I'm Daniel Fordan —
+        most people call me Fords — a Philippine lawyer working where the two meet.
+      </p>
+      <p>
+        My practice revolves around corporate law and special projects, with particular focus on intellectual property,
+        technology, and AI law. I am Program Coordinator at the Manuel L. Quezon University School of Law, where I
+        also teach, including its AI for Modern Legal Practice certification. I serve as President of the Philippine
+        Association of Fintech Lawyers (PAFLA), and have represented the organization in Senate advocacy on open budget
+        legislation.
+      </p>
+      <p>I also write code. I build my own legal-practice tools, and I write about what that teaches me about the law.</p>
+    </div>
+  </section>
+
+  {
+    showRecord && (
+      <section class="record" aria-labelledby="cred-h">
+        <div class="wrap">
+          <h2 id="cred-h" class="hud">Record</h2>
+          <div class="grid">
+            {
+              record.map((r) => (
+                <div class="cell">
+                  <p class:list={['big', { title: r.title }]}>{r.big}</p>
+                  <p class="note">{r.note}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="wrap talks" aria-labelledby="talks-h">
+    <div>
+      <p class="hud">Speaking</p>
+      <h2 id="talks-h">Topics I speak on</h2>
+      <p class="sub">
+        For bar associations, law schools, in-house teams, and regulators. Talks can be adapted for MCLE-style formats.
+      </p>
+    </div>
+    <ol>
+      {
+        talks.map((t, i) => (
+          <li>
+            <span class="n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="t">{t}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section id="contact" class="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <div>
+        <p class="hud">Contact</p>
+        <h2 id="contact-h">Two codes.<br />One counsel.</h2>
+        <p class="sub">
+          For speaking, teaching, and writing invitations, or a question about AI and the law. For client matters, the
+          inquiry goes through the firm.
+        </p>
+        <div class="links">
+          {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
+          <a href={site.linkedin}>LinkedIn</a>
+          <a href={site.github}>GitHub</a>
+        </div>
+      </div>
+      <form
+        name="contact"
+        method="POST"
+        action="/thanks"
+        data-netlify="true"
+        netlify-honeypot="company"
+        aria-label="Contact form"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hp" aria-hidden="true">
+          <label>Leave this empty <input name="company" tabindex="-1" autocomplete="off" /></label>
+        </p>
+        <div class="two">
+          <label>Name<input type="text" name="name" autocomplete="name" required /></label>
+          <label>Email<input type="email" name="email" autocomplete="email" required /></label>
+        </div>
+        <label
+          >What is it about?
+          <select name="topic">
+            {topics.map((t) => <option>{t}</option>)}
+          </select>
+        </label>
+        <label>Message<textarea name="message" rows="5" required></textarea></label>
+        <button type="submit" class="btn ink">Send message</button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: clamp(40px, 6vw, 64px);
+    align-items: start;
+    padding-block: clamp(56px, 8vw, 80px) clamp(48px, 7vw, 72px);
+  }
+  .photo {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    max-width: 440px;
+    background: var(--slate-soft);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .photo img {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 62%;
+    transform: translateX(-50%);
+    filter: grayscale(1);
+  }
+  h1 {
+    font-size: clamp(44px, 5.6vw, 56px);
+    line-height: 1.07;
+    letter-spacing: -0.02em;
+    margin-block: 12px 24px;
+  }
+  .hero p:not(.hud) {
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 27px;
+    color: var(--ink-soft);
+  }
+  .hero p.first {
+    font-size: 18px;
+    line-height: 30px;
+    color: var(--ink);
+  }
+
+  .record {
+    border-block: 1px solid var(--line);
+    background: var(--raised);
+  }
+  .record .wrap {
+    padding-block: 56px;
+  }
+  .record h2 {
+    margin-bottom: 28px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+  }
+  .cell {
+    border-top: 1px solid var(--ink);
+    padding-top: 14px;
+  }
+  .big {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 44px;
+    margin-bottom: 6px;
+  }
+  .big.title {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .note {
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--muted);
+  }
+
+  .talks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: 48px;
+    padding-block: clamp(64px, 9vw, 88px);
+  }
+  .talks h2,
+  .contact h2 {
+    font-size: 40px;
+    line-height: 46px;
+    letter-spacing: -0.01em;
+    margin-block: 8px 16px;
+  }
+  .talks .sub {
+    color: var(--muted);
+    max-width: 380px;
+  }
+  .talks ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--ink);
+  }
+  .talks li {
+    display: flex;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .talks .n {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    padding-top: 3px;
+  }
+  .talks .t {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .contact {
+    background: var(--slate);
+    color: var(--on-slate);
+  }
+  .contact .wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: 56px;
+    padding-block: clamp(64px, 9vw, 88px);
+  }
+  .contact .hud {
+    color: inherit;
+  }
+  .contact h2 {
+    font-size: 48px;
+    line-height: 52px;
+    margin-bottom: 20px;
+  }
+  .contact .sub {
+    max-width: 400px;
+    margin-bottom: 28px;
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .links a {
+    color: var(--on-slate);
+  }
+  .links a:hover {
+    color: var(--brass-on-slate);
+  }
+  form {
+    background: var(--paper);
+    color: var(--ink);
+    padding: clamp(20px, 4vw, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .two {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  input,
+  select,
+  textarea {
+    border: 1px solid var(--field);
+    border-radius: 2px;
+    background: var(--raised);
+    color: var(--ink);
+    font: 400 15px var(--sans);
+  }
+  input,
+  select {
+    height: 44px;
+    padding: 0 12px;
+  }
+  textarea {
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  form .btn {
+    align-self: flex-start;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+  }
+</style>

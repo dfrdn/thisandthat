@@ -1,0 +1,273 @@
+---
+import Mark from './Mark.astro'
+import { nav } from '../site'
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/'
+const isCurrent = (href: string) => !href.includes('#') && (path === href || path.startsWith(href + '/'))
+---
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Daniel Fordan, home">
+      <Mark />
+      <i aria-hidden="true"></i><span>Daniel Fordan</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <span class="hud chapter" id="chapter" aria-hidden="true" hidden></span>
+      {
+        nav.map((item) => (
+          <a class="link" href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+      <button class="theme" type="button" id="theme-toggle" aria-label="Switch to dark mode">
+        <svg viewBox="0 0 20 20" aria-hidden="true">
+          <circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+          <path d="M10 2.75a7.25 7.25 0 0 1 0 14.5z" fill="currentColor"></path>
+        </svg>
+      </button>
+      <a class="cta" href="/about#contact">Contact</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="menu" id="menu" hidden>
+    <div class="wrap">
+      {
+        nav.map((item) => (
+          <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+      <a href="/photography" aria-current={isCurrent('/photography') ? 'page' : undefined}>Photography</a>
+      <a href="/about#contact">Contact</a>
+    </div>
+  </div>
+  <div class="bar" aria-hidden="true"></div>
+</header>
+
+<script>
+  // Light / dark toggle. With no saved choice the site follows the device setting.
+  const toggle = document.getElementById('theme-toggle')
+  const root = document.documentElement
+  const dark = matchMedia('(prefers-color-scheme: dark)')
+  const current = () => root.dataset.theme || (dark.matches ? 'dark' : 'light')
+  const label = () => toggle?.setAttribute('aria-label', current() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode')
+  label()
+  dark.addEventListener('change', label)
+  toggle?.addEventListener('click', () => {
+    const next = current() === 'dark' ? 'light' : 'dark'
+    root.dataset.theme = next
+    try {
+      localStorage.setItem('theme', next)
+    } catch {}
+    label()
+  })
+
+  const btn = document.querySelector<HTMLButtonElement>('.menu-btn')
+  const menu = document.getElementById('menu')
+  if (btn && menu) {
+    const set = (open: boolean) => {
+      btn.setAttribute('aria-expanded', String(open))
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
+      menu.hidden = !open
+    }
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'))
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) set(false)
+    })
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.hidden) {
+        set(false)
+        btn.focus()
+      }
+    })
+    matchMedia('(min-width: 821px)').addEventListener('change', (e) => e.matches && set(false))
+  }
+</script>
+
+<style>
+  .top {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top > .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 14px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .brand :global(svg) {
+    height: 30px;
+    width: auto;
+    color: var(--mark);
+  }
+  .brand span {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .brand i {
+    width: 1px;
+    height: 26px;
+    background: var(--line);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 15px;
+  }
+  .nav .link {
+    color: var(--ink);
+    text-decoration: none;
+    padding-block: 2px;
+    border-bottom: 2px solid transparent;
+  }
+  .nav .link:hover {
+    color: var(--brass);
+  }
+  .nav .link[aria-current='page'] {
+    font-weight: 600;
+    border-bottom-color: var(--ink);
+  }
+  .cta {
+    padding: 9px 16px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+  }
+  .cta:hover {
+    color: var(--paper);
+    opacity: 0.88;
+  }
+  .theme {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-inline: -4px;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .theme:hover {
+    color: var(--brass);
+  }
+  .theme svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.4s var(--ease);
+  }
+  :global([data-theme='dark']) .theme svg {
+    transform: rotate(180deg);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .theme svg {
+      transform: rotate(180deg);
+    }
+  }
+  .chapter {
+    min-width: 13ch;
+    text-align: right;
+  }
+  .bar {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    height: 2px;
+    width: 100%;
+    background: var(--brass);
+    transform-origin: left;
+    transform: scaleX(var(--read, 0));
+  }
+  .menu-btn {
+    display: none;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .menu-btn span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.25s var(--ease);
+  }
+  .menu-btn[aria-expanded='true'] span:first-child {
+    transform: translateY(4.25px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded='true'] span:last-child {
+    transform: translateY(-4.25px) rotate(-45deg);
+  }
+  .menu {
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .menu .wrap {
+    display: flex;
+    flex-direction: column;
+    padding-block: 8px 20px;
+  }
+  .menu a {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .menu a[aria-current='page'] {
+    color: var(--brass);
+  }
+  @media (max-width: 820px) {
+    .nav .link,
+    .chapter {
+      display: none;
+    }
+    .menu-btn {
+      display: inline-flex;
+    }
+    .brand span {
+      font-size: 18px;
+    }
+  }
+  @media (max-width: 420px) {
+    .cta {
+      display: none;
+    }
+  }
+</style>

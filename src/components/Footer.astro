@@ -1,0 +1,66 @@
+---
+import Mark from './Mark.astro'
+import { site } from '../site'
+---
+<footer class="foot">
+  <div class="wrap">
+    <div class="sign">
+      <Mark label="D." />
+      <span>{site.tagline}</span>
+    </div>
+    <nav class="links" aria-label="Footer">
+      <a href="/writing">Writing</a>
+      <a href="/building">Building</a>
+      <a href="/photography">Photography</a>
+      <a href="/about">About</a>
+      <a href={site.linkedin}>LinkedIn</a>
+      <a href={site.github}>GitHub</a>
+    </nav>
+    <p class="copy">© {new Date().getFullYear()} Daniel Fordan</p>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--night);
+    color: var(--on-night);
+  }
+  .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px 32px;
+    padding-block: 40px;
+  }
+  .sign {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .sign :global(svg) {
+    height: 28px;
+    width: auto;
+    color: var(--on-night);
+  }
+  .sign span {
+    font-family: var(--serif);
+    font-size: 18px;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 22px;
+    font-size: 14px;
+  }
+  .links a {
+    color: var(--on-night);
+  }
+  .links a:hover {
+    color: var(--brass-on-slate);
+  }
+  .copy {
+    font-size: 14px;
+    color: #9aa3a5;
+  }
+</style>

@@ -1,0 +1,133 @@
+---
+// A project card with a site thumbnail. Used on the home page and on /building.
+import { existsSync } from 'node:fs'
+import { thumbnail, type Project } from '../data/projects'
+
+interface Props {
+  project: Project
+  heading?: 'h2' | 'h3'
+}
+
+const { project: p, heading: H = 'h3' } = Astro.props
+const Tag = p.url ? 'a' : 'div'
+const thumb = thumbnail(p)
+const hasThumb = existsSync(new URL(`../../public${thumb}`, import.meta.url))
+---
+<Tag class:list={['proj', 'rv', { dark: p.featured }]} href={p.url} rel={p.url ? 'noopener' : undefined}>
+  {
+    hasThumb && (
+      <div class="thumb">
+        <img src={thumb} width="960" height="600" loading="lazy" decoding="async" alt="" />
+      </div>
+    )
+  }
+  <div class="body">
+    <p class="hud">{p.kicker}</p>
+    <div>
+      <H class="name">
+        {p.name}
+        {p.url && <span class="go" aria-hidden="true">↗</span>}
+      </H>
+      <p class="sum">{p.summary}</p>
+      {p.stack && <code class="stack">{p.stack}</code>}
+    </div>
+  </div>
+</Tag>
+
+<style>
+  .proj {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    background: var(--raised);
+    color: var(--ink);
+    text-decoration: none;
+    overflow: hidden;
+  }
+  a.proj {
+    transition:
+      transform 0.35s var(--ease),
+      border-color 0.2s;
+  }
+  a.proj:hover {
+    transform: translateY(-4px);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .proj.dark,
+  a.proj.dark:hover {
+    background: var(--night);
+    color: var(--on-night);
+    border-color: var(--night);
+  }
+
+  /* Screenshots sit in greyscale, in keeping with the near-monochrome palette, and come into colour on hover. */
+  .thumb {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background: var(--slate-soft);
+  }
+  .dark .thumb {
+    border-bottom-color: color-mix(in srgb, var(--on-night) 15%, transparent);
+  }
+  .thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    filter: grayscale(1);
+    transition:
+      filter 0.4s,
+      transform 0.6s var(--ease);
+  }
+  a.proj:hover .thumb img,
+  a.proj:focus-visible .thumb img {
+    filter: none;
+    transform: scale(1.02);
+  }
+
+  .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 26px 30px 30px;
+  }
+  .dark .hud {
+    color: var(--on-night);
+  }
+  .name {
+    font-size: 30px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .go {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--brass);
+    margin-left: 6px;
+  }
+  .sum {
+    font-size: 15px;
+    line-height: 1.55;
+    opacity: 0.85;
+  }
+  .stack {
+    display: block;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .dark .stack {
+    color: #9aa3a5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a.proj:hover .thumb img {
+      transform: none;
+    }
+  }
+</style>

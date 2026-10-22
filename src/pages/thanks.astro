@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro'
+---
+<Base title="Message sent">
+  <section class="wrap intro-block">
+    <p class="hud">[ received ]</p>
+    <h1>Thank you.</h1>
+    <p class="lede">Your message is in. I read every one and reply when I can.</p>
+    <p class="go"><a class="btn solid" href="/">Back home</a></p>
+  </section>
+  <meta name="robots" content="noindex" slot="head" />
+</Base>
+
+<style>
+  .go {
+    margin-top: 32px;
+    padding-bottom: 96px;
+  }
+</style>

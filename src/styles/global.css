@@ -1,0 +1,262 @@
+/* Daniel Fordan — tokens from brand/tokens.json. Paper (light) and Night (dark). */
+:root {
+  --paper: #f2f2f0;
+  --raised: #fbfbfa;
+  --line: #d6d9d8;
+  --ink: #1e2224;
+  --muted: #5f6668;
+  --ink-soft: #3e4446;
+  --slate: #5f6668;
+  --slate-deep: #3e4446;
+  --slate-soft: #e3e6e5;
+  --on-slate: #f2f2f0;
+  --brass: #86652b;
+  --brass-hover: #5f4618;
+  --brass-soft: #efe6d6;
+  --brass-on-slate: #ecd6a8;
+  --mark: #5f6668;
+  --backdrop: #c3c9c8;
+  --night: #1e2224;
+  --on-night: #e3e6e5;
+  --field: #b9bebd;
+
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --wrap: 1200px;
+  --gut: clamp(16px, 4vw, 48px);
+  --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #15191a;
+    --raised: #1d2224;
+    --line: #2e3436;
+    --ink: #eceeed;
+    --muted: #9aa3a5;
+    --ink-soft: #c3c9c8;
+    --slate-soft: #252b2d;
+    --brass: #c9a465;
+    --brass-hover: #e0c28a;
+    --brass-soft: #2e2719;
+    --night: #0d1011;
+    --on-night: #e3e6e5;
+    --mark: #c3c9c8;
+    --backdrop: #5f6668;
+    --field: #4a5153;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --paper: #15191a;
+  --raised: #1d2224;
+  --line: #2e3436;
+  --ink: #eceeed;
+  --muted: #9aa3a5;
+  --ink-soft: #c3c9c8;
+  --slate-soft: #252b2d;
+  --brass: #c9a465;
+  --brass-hover: #e0c28a;
+  --brass-soft: #2e2719;
+  --night: #0d1011;
+  --on-night: #e3e6e5;
+  --mark: #c3c9c8;
+  --backdrop: #5f6668;
+  --field: #4a5153;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+a {
+  color: var(--brass);
+}
+a:hover {
+  color: var(--brass-hover);
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--serif);
+  font-weight: 500;
+  text-wrap: balance;
+  margin: 0;
+}
+h2 {
+  font-size: clamp(36px, 5vw, 60px);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+}
+p {
+  margin: 0;
+}
+code {
+  font-family: var(--mono);
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gut);
+}
+.hud {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 50;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+.skip:focus {
+  top: 12px;
+}
+svg.mk {
+  display: block;
+  overflow: visible;
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 2px;
+  border: 0;
+  font: 600 14px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn.solid {
+  background: var(--slate);
+  color: var(--on-slate);
+}
+.btn.solid:hover {
+  background: var(--slate-deep);
+  color: var(--on-slate);
+}
+.btn.ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn.ink:hover {
+  color: var(--paper);
+  opacity: 0.88;
+}
+.btn.line {
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+.btn.line:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn.line.light {
+  border-color: var(--on-slate);
+  color: var(--on-slate);
+}
+.btn.line.light:hover {
+  background: var(--on-slate);
+  color: var(--slate-deep);
+}
+
+/* page intro, shared by the inner pages */
+.intro-block {
+  padding-block: clamp(56px, 8vw, 96px) clamp(32px, 4vw, 48px);
+}
+.intro-block h1 {
+  font-size: clamp(44px, 6.4vw, 72px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin-block: 12px 20px;
+}
+.intro-block .lede {
+  max-width: 620px;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--ink-soft);
+}
+
+/* scroll reveal: resting state is fully visible; JS only pre-offsets elements that start below the fold */
+.pre {
+  transform: translateY(28px);
+  opacity: 0.35;
+}
+.rv {
+  transition:
+    transform 0.9s var(--ease),
+    opacity 0.9s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .pre {
+    transform: none;
+    opacity: 1;
+  }
+}

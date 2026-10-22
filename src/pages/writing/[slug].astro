@@ -1,0 +1,475 @@
+---
+import { render } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+import { site } from '../../site'
+import { getPosts, readTime, formatDate, type Post } from '../../lib/writing'
+
+export async function getStaticPaths() {
+  const posts = await getPosts()
+  return posts.map((post, i) => {
+    // Next part of a series first; otherwise the next essay down the list, wrapping round.
+    const { series } = post.data
+    const nextPart =
+      series &&
+      posts.find((p) => p.data.series?.name === series.name && p.data.series.part === series.part + 1)
+    const next = nextPart || (posts.length > 1 ? posts[(i + 1) % posts.length] : undefined)
+    return { params: { slug: post.id }, props: { post, next } }
+  })
+}
+
+interface Props {
+  post: Post
+  next?: Post
+}
+
+const { post, next } = Astro.props
+const { Content, headings } = await render(post)
+const { title, subtitle, dek, description, date, topic, series, shortAnswer, cites } = post.data
+const toc = headings.filter((h) => h.depth === 2 && h.slug !== 'footnote-label')
+const minutes = readTime(post)
+const url = new URL(`/writing/${post.id}`, Astro.site).href
+const kicker = series ? `${topic} / Part ${series.part} of ${series.of}` : topic
+const nextKicker = next?.data.series && series && next.data.series.name === series.name
+  ? `Next · Part ${next.data.series.part} of ${next.data.series.of}`
+  : 'Next'
+const nextTitle = next?.data.series && series && next.data.series.name === series.name
+  ? next.data.title.split(': ').slice(1).join(': ') || next.data.title
+  : next?.data.title
+---
+<Base title={title} description={description} type="article" published={date}>
+  <article class="wrap layout">
+    <div class="main">
+      <a class="back" href="/writing">← All writing</a>
+      <p class="hud">{kicker}</p>
+      <h1>{title}</h1>
+      {subtitle && <p class="subtitle">{subtitle}</p>}
+      <p class="dek">{dek}</p>
+      <div class="byline">
+        <span class="who">Daniel Fordan</span>
+        <time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time>
+        <span>{minutes} min read</span>
+      </div>
+
+      <aside class="answer" aria-label="The short answer">
+        <p class="hud">The short answer</p>
+        <p>{shortAnswer}</p>
+      </aside>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="author">
+        <img src="/brand/df-avatar.svg" alt="" width="56" height="56" />
+        <p>
+          <span>Daniel Fordan</span> deals with codes — the law's and the machine's. Lawyer on AI, technology, and IP;
+          Program Coordinator at MLQU School of Law, where he teaches AI for legal practice.
+        </p>
+      </div>
+
+      {
+        next && (
+          <a class="next" href={`/writing/${next.id}`}>
+            <p class="hud">{nextKicker}</p>
+            <p class="t">{nextTitle} →</p>
+          </a>
+        )
+      }
+    </div>
+
+    <aside class="side" aria-label="In this essay">
+      <div class="sticky">
+        {
+          cites.length > 0 && (
+            <div class="block first">
+              <p class="hud">Codes cited</p>
+              <ul class="cites">
+                {cites.map((c) => (
+                  <li>
+                    <code>{c.code}</code>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+        {
+          toc.length > 1 && (
+            <nav class:list={['block', 'toc-wrap', { first: cites.length === 0 }]} aria-label="Contents">
+              <p class="hud">Contents</p>
+              <ol class="toc">
+                {toc.map((h) => (
+                  <li>
+                    <a href={`#${h.slug}`} data-toc={h.slug}>
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+        <div class="block">
+          <p class="hud">Share</p>
+          <div class="share">
+            <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`} rel="noopener" target="_blank"
+              >LinkedIn</a
+            >
+            <button type="button" id="copy-link" data-url={url}>Copy link</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </article>
+</Base>
+
+<script>
+  const btn = document.getElementById('copy-link')
+  btn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(btn.dataset.url ?? location.href)
+      btn.textContent = 'Copied'
+    } catch {
+      btn.textContent = 'Press ⌘C / Ctrl+C'
+    }
+    setTimeout(() => (btn.textContent = 'Copy link'), 1600)
+  })
+
+  // Mark the section being read in the contents list.
+  const links = new Map(
+    Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc]')).map((a) => [a.dataset.toc, a]),
+  )
+  if (links.size && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (es) => {
+        es.forEach((e) => {
+          if (!e.isIntersecting) return
+          links.forEach((a) => a.removeAttribute('aria-current'))
+          links.get(e.target.id)?.setAttribute('aria-current', 'true')
+        })
+      },
+      { rootMargin: '0px 0px -70% 0px' },
+    )
+    links.forEach((_, id) => {
+      const h = id && document.getElementById(id)
+      if (h) io.observe(h)
+    })
+  }
+</script>
+
+<style>
+  .layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+    padding-block: clamp(48px, 7vw, 72px) 96px;
+  }
+  .main {
+    flex: 999 1 560px;
+    min-width: 0;
+    max-width: 720px;
+  }
+  .back {
+    display: inline-block;
+    margin-bottom: 32px;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  h1 {
+    font-size: clamp(38px, 5.4vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-block: 16px 16px;
+  }
+  .subtitle {
+    font-family: var(--serif);
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .dek {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 32px;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+  }
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding: 16px 0;
+    border-block: 1px solid var(--line);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .byline .who {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .answer {
+    margin: 40px 0 48px;
+    padding: 28px 32px;
+    background: var(--brass-soft);
+  }
+  .answer .hud {
+    color: var(--brass);
+    margin-bottom: 8px;
+  }
+  .answer p:not(.hud) {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 32px;
+  }
+
+  /* essay body */
+  .prose {
+    font-size: 18px;
+    line-height: 31px;
+    overflow-wrap: break-word;
+  }
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 24px;
+  }
+  .prose :global(li) {
+    margin-bottom: 8px;
+  }
+  .prose :global(h2) {
+    margin: 56px 0 16px;
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: -0.01em;
+  }
+  .prose :global(h3) {
+    margin: 40px 0 12px;
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .prose :global(h4) {
+    margin: 32px 0 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .prose :global(blockquote) {
+    margin: 40px 0;
+    padding: 0 0 0 28px;
+    border-left: 1px solid var(--ink);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 34px;
+  }
+  .prose :global(blockquote p) {
+    margin-bottom: 12px;
+  }
+  .prose :global(code) {
+    font-size: 16px;
+    background: var(--slate-soft);
+    padding: 2px 6px;
+  }
+  .prose :global(img) {
+    display: block;
+    width: 100%;
+    max-height: 340px;
+    object-fit: contain;
+    margin: 40px 0;
+    padding: clamp(24px, 4vw, 40px);
+    background: var(--slate-soft);
+    filter: grayscale(1) contrast(0.95);
+  }
+  .prose :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 48px 0;
+  }
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 24px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose :global(th) {
+    background: var(--slate-soft);
+  }
+  .prose :global(sup a) {
+    font-family: var(--mono);
+    font-size: 12px;
+    text-decoration: none;
+    padding-inline: 1px;
+  }
+  .prose :global(.footnotes),
+  .prose :global([data-footnotes]) {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--ink);
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--muted);
+  }
+  .prose :global([data-footnotes] h2),
+  .prose :global(.footnotes h2) {
+    margin: 0 0 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+    white-space: normal;
+  }
+  .prose :global([data-footnotes] ol),
+  .prose :global(.footnotes ol) {
+    padding-left: 24px;
+  }
+  .prose :global([data-footnotes] li),
+  .prose :global(.footnotes li) {
+    margin-bottom: 10px;
+  }
+  .prose :global([data-footnotes] p),
+  .prose :global(.footnotes p) {
+    margin: 0;
+  }
+  .prose :global([data-footnotes] code) {
+    font-size: 13px;
+  }
+
+  .author {
+    margin-top: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 28px;
+    border-top: 1px solid var(--ink);
+  }
+  .author img {
+    flex: none;
+  }
+  .author p {
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--muted);
+  }
+  .author span {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .next {
+    display: block;
+    margin-top: 48px;
+    padding: 28px 32px;
+    background: var(--slate);
+    color: var(--on-slate);
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .next:hover {
+    background: var(--slate-deep);
+    color: var(--on-slate);
+  }
+  .next .hud {
+    color: inherit;
+    margin-bottom: 8px;
+  }
+  .next .t {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 26px;
+    line-height: 32px;
+  }
+
+  .side {
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+  .sticky {
+    position: sticky;
+    top: 96px;
+  }
+  .block {
+    border-top: 1px solid var(--line);
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+  .block.first {
+    border-top-color: var(--ink);
+    margin-top: 0;
+  }
+  .block .hud {
+    margin-bottom: 16px;
+  }
+  .cites,
+  .toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cites code {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .toc a {
+    display: block;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--muted);
+    text-decoration: none;
+    padding-left: 12px;
+    border-left: 1px solid var(--line);
+  }
+  .toc a:hover {
+    color: var(--ink);
+  }
+  .toc a[aria-current] {
+    color: var(--ink);
+    border-left-color: var(--brass);
+  }
+  .share {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+  }
+  .share button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--brass);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  @media (max-width: 900px) {
+    .sticky {
+      position: static;
+    }
+    .toc-wrap {
+      display: none;
+    }
+  }
+</style>

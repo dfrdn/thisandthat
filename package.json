@@ -1,43 +1,21 @@
 {
-  "name": "thisandthat",
-  "version": "1.0.0",
+  "name": "danielfordan",
+  "version": "2.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "nuxt-ts",
-    "build": "nuxt-ts build",
-    "start": "nuxt-ts start",
-    "generate": "nuxt-ts generate",
-    "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "npm run lint:js"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "thumbnails": "node scripts/thumbnails.mjs"
   },
   "dependencies": {
-    "@guillaumebriday/vue-scroll-progress-bar": "^1.0.0",
-    "@nuxt/content": "^1.5.0",
-    "@nuxt/http": "^0.5.12",
-    "@nuxt/typescript-runtime": "^1.0.0",
-    "@tailwindcss/typography": "^0.2.0",
-    "md5": "^2.3.0",
-    "netlify-cli": "^2.64.0",
-    "netlify-lambda": "^2.0.1",
-    "nuxt": "^2.14.0",
-    "vue-scrollactive": "^0.9.3",
-    "vue-typer": "^1.2.0",
-    "vue2-scrollspy": "^2.3.1"
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.8"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.14.0",
-    "@nuxt/typescript-build": "^2.0.2",
-    "@nuxtjs/eslint-config": "^3.1.0",
-    "@nuxtjs/eslint-config-typescript": "^3.0.0",
-    "@nuxtjs/eslint-module": "^2.0.0",
-    "@nuxtjs/tailwindcss": "^2.1.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.5.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-nuxt": "^1.0.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "node-sass": "^4.14.1",
-    "prettier": "^2.0.5",
-    "sass-loader": "^10.0.1"
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.3"
   }
 }

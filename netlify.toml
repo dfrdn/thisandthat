@@ -1,8 +1,32 @@
 [build]
-    functions = "functions"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Keep links to the 2020 site working.
 [[redirects]]
-    from = "/api/*"
-    to = "/.netlify/functions/:splat"
-    status = 200
-[[plugins]]
-    package = "@netlify/plugin-functions-install-core"
+  from = "/law"
+  to = "/writing"
+  status = 301
+
+[[redirects]]
+  from = "/law/:slug"
+  to = "/writing/:slug"
+  status = 301
+
+[[redirects]]
+  from = "/dev"
+  to = "/building"
+  status = 301
+
+[[redirects]]
+  from = "/photog"
+  to = "/photography"
+  status = 301
+
+[[redirects]]
+  from = "/photog/*"
+  to = "/photography"
+  status = 301

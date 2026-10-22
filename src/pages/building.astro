@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro'
+import ProjectCard from '../components/ProjectCard.astro'
+import { projects } from '../data/projects'
+---
+<Base title="Building" description="The other kind of code: legal-practice tools, websites, and experiments built by Daniel Fordan.">
+  <section class="wrap intro-block">
+    <p class="hud">Building</p>
+    <h1>The other kind of code.</h1>
+    <p class="lede">
+      I build the tools I write about. Some are for practice, some were for learning — each one taught me something about
+      how rules get executed.
+    </p>
+  </section>
+
+  <section class="wrap list" aria-label="Projects">
+    {projects.map((p) => <ProjectCard project={p} heading="h2" />)}
+  </section>
+</Base>
+
+<style>
+  .list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+    gap: 20px;
+    padding-bottom: clamp(72px, 10vw, 120px);
+  }
+</style>

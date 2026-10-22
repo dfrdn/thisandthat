@@ -1,0 +1,19 @@
+---
+// The D. mark in a single flat colour (currentColor). Needs <MarkDefs /> on the page.
+interface Props {
+  label?: string
+  class?: string
+}
+const { label, class: className } = Astro.props
+---
+<svg
+  class:list={['mk', className]}
+  viewBox="0 0 151 147"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+>
+  <use href="#p-stem" fill="currentColor"></use>
+  <use href="#p-brace" fill="currentColor"></use>
+  <use href="#p-dot" fill="currentColor"></use>
+</svg>
