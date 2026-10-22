@@ -1,6 +1,7 @@
 ---
 // A project card with a site thumbnail. Used on the home page and on /building.
 import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { thumbnail, type Project } from '../data/projects'
 
 interface Props {
@@ -11,7 +12,8 @@ interface Props {
 const { project: p, heading: H = 'h3' } = Astro.props
 const Tag = p.url ? 'a' : 'div'
 const thumb = thumbnail(p)
-const hasThumb = existsSync(new URL(`../../public${thumb}`, import.meta.url))
+// Resolve from the project root: in a production build this file's own URL points into dist/.
+const hasThumb = existsSync(join(process.cwd(), 'public', thumb))
 ---
 <Tag class:list={['proj', 'rv', { dark: p.featured }]} href={p.url} rel={p.url ? 'noopener' : undefined}>
   {
