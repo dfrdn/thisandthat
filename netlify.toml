@@ -8,25 +8,25 @@
 # Keep links to the 2020 site working.
 [[redirects]]
   from = "/law"
-  to = "/writing"
+  to = "/writing/"
   status = 301
 
 [[redirects]]
   from = "/law/:slug"
-  to = "/writing/:slug"
+  to = "/writing/:slug/"
   status = 301
 
 [[redirects]]
   from = "/dev"
-  to = "/building"
+  to = "/building/"
   status = 301
 
 [[redirects]]
   from = "/photog"
-  to = "/photography"
+  to = "/photography/"
   status = 301
 
 [[redirects]]
   from = "/photog/*"
-  to = "/photography"
+  to = "/photography/"
   status = 301

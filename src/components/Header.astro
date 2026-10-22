@@ -2,8 +2,13 @@
 import Mark from './Mark.astro'
 import { nav } from '../site'
 
-const path = Astro.url.pathname.replace(/\/$/, '') || '/'
-const isCurrent = (href: string) => !href.includes('#') && (path === href || path.startsWith(href + '/'))
+const trim = (p: string) => p.replace(/\/$/, '') || '/'
+const path = trim(Astro.url.pathname)
+const isCurrent = (href: string) => {
+  if (href.includes('#')) return false
+  const h = trim(href)
+  return path === h || path.startsWith(h + '/')
+}
 ---
 <header class="top">
   <div class="wrap">
@@ -26,7 +31,7 @@ const isCurrent = (href: string) => !href.includes('#') && (path === href || pat
           <path d="M10 2.75a7.25 7.25 0 0 1 0 14.5z" fill="currentColor"></path>
         </svg>
       </button>
-      <a class="cta" href="/about#contact">Contact</a>
+      <a class="cta" href="/about/#contact">Contact</a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
         <span></span><span></span>
       </button>
@@ -41,8 +46,8 @@ const isCurrent = (href: string) => !href.includes('#') && (path === href || pat
           </a>
         ))
       }
-      <a href="/photography" aria-current={isCurrent('/photography') ? 'page' : undefined}>Photography</a>
-      <a href="/about#contact">Contact</a>
+      <a href="/photography/" aria-current={isCurrent('/photography') ? 'page' : undefined}>Photography</a>
+      <a href="/about/#contact">Contact</a>
     </div>
   </div>
   <div class="bar" aria-hidden="true"></div>

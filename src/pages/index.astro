@@ -38,8 +38,8 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
           intellectual property law. I teach AI to lawyers, and I build the tools I write about.
         </p>
         <div class="btns">
-          <a class="btn solid" href="/writing">Read the writing</a>
-          <a class="btn line" href="/about#contact">Work with me</a>
+          <a class="btn solid" href="/writing/">Read the writing</a>
+          <a class="btn line" href="/about/#contact">Work with me</a>
         </div>
       </div>
       <div class="portrait" id="portrait">
@@ -177,7 +177,7 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
     <div class="wrap">
       <div class="head rv">
         <div><p class="hud">[ 04 / writing ]</p><h2 id="writing-h">Two Codes</h2></div>
-        <a href="/writing" class="all">All writing →</a>
+        <a href="/writing/" class="all">All writing →</a>
       </div>
       <div>
         <div class="post soon rv">
@@ -188,7 +188,7 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
         </div>
         {
           posts.map((post) => (
-            <a class="post rv" href={`/writing/${post.id}`}>
+            <a class="post rv" href={`/writing/${post.id}/`}>
               <p class="hud">
                 {formatDate(post.data.date, 'month')} · {shortTopic(post.data.topic)}
               </p>
@@ -211,7 +211,7 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
           <p class="hud">[ 05 / teaching &amp; speaking ]</p>
           <h2 id="teach-h">Teaching lawyers to read the machine.</h2>
           <p class="sub">Courses, workshops, and talks on using AI in legal practice, and on how the law should treat it.</p>
-          <a class="btn line light" href="/about#contact">Invite me to speak</a>
+          <a class="btn line light" href="/about/#contact">Invite me to speak</a>
         </div>
         <div class="list">
           <div class="item">
@@ -235,7 +235,7 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
     <div class="wrap">
       <div class="head rv">
         <div><p class="hud">[ 06 / building ]</p><h2 id="build-h">The other kind of code.</h2></div>
-        <a href="/building" class="all">All projects →</a>
+        <a href="/building/" class="all">All projects →</a>
       </div>
       <div class="grid">
         {
@@ -260,7 +260,7 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
             </>
           )
         }
-        <a class="btn send" href="/about#contact">Send a message</a>
+        <a class="btn send" href="/about/#contact">Send a message</a>
       </div>
     </div>
   </section>
