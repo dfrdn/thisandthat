@@ -3,12 +3,17 @@
 interface Props {
   label?: string
   class?: string
+  // Intrinsic height in px, so the mark stays small before CSS applies; CSS sets the real size.
+  size?: number
 }
-const { label, class: className } = Astro.props
+const { label, class: className, size = 30 } = Astro.props
+const width = Math.round((size * 151) / 147)
 ---
 <svg
   class:list={['mk', className]}
   viewBox="0 0 151 147"
+  width={width}
+  height={size}
   role={label ? 'img' : undefined}
   aria-label={label}
   aria-hidden={label ? undefined : 'true'}
