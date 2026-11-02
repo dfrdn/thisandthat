@@ -554,10 +554,12 @@ const rolesLabel = `I'm ${article(site.roles[0])} ${site.roles.slice(0, -1).join
     transform: translate3d(calc(var(--mx, 0) * 10px), calc(var(--sy, 0) * 48px + var(--my, 0) * 6px), 0);
     will-change: transform;
   }
+  /* Bleeds below the box by the figure's max upward pointer shift (6px above), so the
+     suit stays flush with the hero's clipped bottom edge instead of lifting off it. */
   .portrait img {
     position: absolute;
     left: 1%;
-    bottom: 0;
+    bottom: -6px;
     width: 51%;
     height: auto;
     max-width: none;
