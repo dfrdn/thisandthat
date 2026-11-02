@@ -22,5 +22,6 @@ export const nav = [
   { href: '/writing/', label: 'Writing' },
   { href: '/#teaching', label: 'Teaching' },
   { href: '/building/', label: 'Building' },
+  { href: 'https://garden.danielfordan.com/', label: 'Garden' },
   { href: '/about/', label: 'About' },
 ]
